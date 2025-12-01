@@ -16,14 +16,16 @@ func main() {
 
 	lines := strings.Split(strings.TrimSpace(string(data)), "\n")
 
-	solutionPart1 := part1(lines)
+	solutionPart1, solutionPart2 := part1(lines)
 
-	fmt.Println(solutionPart1)
+	fmt.Println("solution part 1 = ", solutionPart1)
+	fmt.Println("solution part 2 =", solutionPart2)
 }
 
-func part1(lines []string) int {
+func part1(lines []string) (int, int) {
 	var dialPos int = 50
 	var countZeros int = 0
+	var countRollOvers int = 0
 
 	for _, line := range lines {
 		direction := line[0:1]
@@ -32,23 +34,29 @@ func part1(lines []string) int {
 		if err != nil {
 			panic(err)
 		}
-		//fmt.Println("direction, amount")
-		//fmt.Println(direction, amount)
 
 		if direction == "R" {
+			countRollOvers += (dialPos + amount) / 100
+
 			dialPos = dialRight(dialPos, amount)
 		} else {
+			if dialPos == 0 {
+				countRollOvers += amount / 100
+			} else if amount < dialPos {
+				// no roll overs
+			} else {
+				countRollOvers += 1 + (amount-dialPos)/100
+			}
+
 			dialPos = dialLeft(dialPos, amount)
 		}
-
-		//fmt.Println(dialPos)
 
 		if dialPos == 0 {
 			countZeros++
 		}
 	}
 
-	return countZeros
+	return countZeros, countRollOvers
 }
 
 func dialRight(dialPos int, amount int) int {
