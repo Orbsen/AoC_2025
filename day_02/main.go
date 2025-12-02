@@ -60,14 +60,13 @@ func parseIdRanges(rangeStrings []string) []IdRange {
 	return idRanges
 }
 
-func findInvalidIds(idBereiche []IdRange) []int {
+func findInvalidIds(idRanges []IdRange) []int {
 	var invalidIds []int
 
-	maxEndID := getMaxEndId(idBereiche)
+	maxEndID := getMaxEndId(idRanges)
 	maxDigits := len(strconv.Itoa(maxEndID))
 
 	for fullLength := 2; fullLength <= maxDigits; fullLength += 2 {
-
 		blockLength := fullLength / 2
 
 		var blockStart int
@@ -90,7 +89,7 @@ func findInvalidIds(idBereiche []IdRange) []int {
 			blockStart = 10000
 			blockEnd = 99999
 		default:
-			continue
+			break
 		}
 
 		for blockValue := blockStart; blockValue <= blockEnd; blockValue++ {
@@ -107,7 +106,7 @@ func findInvalidIds(idBereiche []IdRange) []int {
 				break
 			}
 
-			if inRange(fullId, idBereiche) {
+			if inRange(fullId, idRanges) {
 				invalidIds = append(invalidIds, fullId)
 			}
 		}
