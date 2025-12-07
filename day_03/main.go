@@ -16,8 +16,10 @@ func main() {
 	lines := strings.Split(strings.TrimSpace(string(data)), "\n")
 
 	solution1 := getSolutionPart1(lines)
+	solution2 := getSolutionPart2(lines)
 
 	fmt.Println("solution part 1 = ", solution1)
+	fmt.Println("solution part 2 = ", solution2)
 }
 
 func getSolutionPart1(lines []string) int {
@@ -36,6 +38,18 @@ func getSolutionPart1(lines []string) int {
 	}
 
 	return sumJoltages
+}
+
+func getSolutionPart2(lines []string) int {
+	sumMuchLargerJoltages := 0
+	var highestJoltage int
+
+	for _, line := range lines {
+		highestJoltage = getHighestJoltage(line, 12)
+		sumMuchLargerJoltages += highestJoltage
+	}
+
+	return sumMuchLargerJoltages
 }
 
 func getHighestValueAndIndex(
@@ -63,4 +77,36 @@ func getHighestValueAndIndex(
 	}
 
 	return strconv.Itoa(highestValue), highestIndex
+}
+
+func getHighestJoltage(line string, length int) int {
+	var digits []int
+	var croppedArray []int
+	indexPointer := 0
+	outputString := ""
+
+	for _, char := range line {
+		digits = append(digits, int(char-'0'))
+	}
+
+	for i := length; i > 0; i-- {
+		inputString := ""
+		croppedArray = digits[indexPointer:]
+		croppedArray = croppedArray[:len(croppedArray)-(i-1)]
+
+		for _, digit := range croppedArray {
+			inputString += strconv.Itoa(digit)
+		}
+
+		index := 0
+		highestValue := ""
+		highestValue, index = getHighestValueAndIndex(inputString, true)
+
+		outputString += highestValue
+		indexPointer += index + 1
+	}
+
+	outputInt, _ := strconv.Atoi(outputString)
+
+	return outputInt
 }

@@ -34,3 +34,25 @@ func TestGetHighestValueAndIndex(t *testing.T) {
 		})
 	}
 }
+
+func TestGetHighestJoltage(t *testing.T) {
+	tests := []struct {
+		testCase string
+		input    string
+		length   int
+		expected int
+	}{
+		{"lowest Numbers are last", "8765432", 5, 87654},
+		{"lowest Numbers are first", "1234567", 5, 34567},
+		{"lowest Numbers are in between", "3526765", 5, 56765},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.testCase, func(t *testing.T) {
+			got := getHighestJoltage(tt.input, tt.length)
+			if got != tt.expected {
+				t.Errorf("got %d excpeted: %d ", got, tt.expected)
+			}
+		})
+	}
+}
