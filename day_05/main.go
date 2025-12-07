@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -20,8 +21,10 @@ func main() {
 	ranges, ids := parseInput(data)
 
 	countFreshIds := getCountofFreshIds(ranges, ids)
+	countAllFreshIds := getCountOffAllFreshIds(ranges)
 
 	fmt.Println("solution part 1 = ", countFreshIds)
+	fmt.Println("solution part 2 = ", countAllFreshIds)
 }
 
 func parseInput(data []byte) ([]IdRange, []int) {
@@ -57,6 +60,35 @@ func getCountofFreshIds(idRanges []IdRange, ids []int) int {
 				break
 			}
 		}
+	}
+	return count
+}
+
+func getCountOffAllFreshIds(idRanges []IdRange) int {
+	count := 0
+
+	sort.Slice(idRanges, func(i, j int) bool {
+		return idRanges[i].from < idRanges[j].from
+	})
+
+	mergedRanges := []IdRange{idRanges[0]}
+
+	for _, current := range idRanges[1:] {
+		lastMergedIndex := len(mergedRanges) - 1
+		lastMerged := mergedRanges[lastMergedIndex]
+
+		if current.from <= lastMerged.to {
+			if current.to > lastMerged.to {
+				mergedRanges[lastMergedIndex].to = current.to
+			}
+		} else {
+			mergedRanges = append(mergedRanges, current)
+		}
+	}
+
+	for _, idRange := range mergedRanges {
+		result := idRange.to - idRange.from
+		count += result + 1
 	}
 	return count
 }
