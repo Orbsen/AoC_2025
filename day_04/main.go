@@ -12,7 +12,6 @@ type Point struct {
 }
 
 const placeholder = "."
-const paperRoll = "@"
 
 var directions = []Point{
 	{x: 1, y: 0},
@@ -32,14 +31,17 @@ func main() {
 	}
 
 	countPaperRolls := 0
+	maxNumberRemoveablePaperRolls := 0
 
 	lines := strings.Split(strings.TrimSpace(string(data)), "\n")
 
 	paddedInput := padInput(lines)
 
-	countPaperRolls = getCountPaperRolls(paddedInput)
+	countPaperRolls, _ = getCountPaperRolls(paddedInput)
+	maxNumberRemoveablePaperRolls = getMaxNumberRemoveablePaperRolls(paddedInput)
 
 	fmt.Println("solution part 1 = ", countPaperRolls)
+	fmt.Println("solution part 2 = ", maxNumberRemoveablePaperRolls)
 }
 
 func padInput(lines []string) [][]string {
@@ -59,8 +61,14 @@ func padInput(lines []string) [][]string {
 	return output
 }
 
-func getCountPaperRolls(paddedInput [][]string) int {
+func getCountPaperRolls(paddedInput [][]string) (int, [][]string) {
 	count := 0
+	paddedOutput := make([][]string, len(paddedInput))
+
+	for i := range paddedInput {
+		paddedOutput[i] = make([]string, len(paddedInput[i]))
+		copy(paddedOutput[i], paddedInput[i])
+	}
 
 	for indexLine, line := range paddedInput {
 
@@ -87,9 +95,26 @@ func getCountPaperRolls(paddedInput [][]string) int {
 
 			if adjacentCounter < 4 {
 				count++
+				paddedOutput[indexLine][indexRow] = placeholder
 			}
 		}
 	}
 
-	return count
+	return count, paddedOutput
+}
+
+func getMaxNumberRemoveablePaperRolls(paddedInput [][]string) int {
+	maxCount := 0
+	var count int
+
+	for {
+		count, paddedInput = getCountPaperRolls(paddedInput)
+		maxCount += count
+
+		if count == 0 {
+			break
+		}
+	}
+
+	return maxCount
 }
